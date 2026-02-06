@@ -3,209 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <title>D&D Ultimate Dice Roller</title>
-
 <style>
-body {
-  background:#0d0d0d;
-  color:#eee;
-  font-family: Arial, sans-serif;
-  padding:15px;
-}
-h1,h2 { color:#f4b942; }
-.box {
-  background:#1a1a1a;
-  padding:15px;
-  margin-bottom:20px;
-  border-radius:10px;
-}
-input, select, button {
-  width:100%;
-  padding:6px;
-  margin-top:5px;
-}
-button {
-  background:#f4b942;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-  cursor:pointer;
-}
-.grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-.output {
-  background:#111;
-  padding:10px;
-  margin-top:10px;
-  border-radius:6px;
-  white-space:pre-line;
-}
-.history {
-  max-height:200px;
-  overflow-y:auto;
-  font-size:0.9em;
-}
+  body {
+    background: #0d0d0d;
+    color: #eee;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 0;
+  }
+
+  h1, h2 {
+    color: #f4b942;
+    margin-bottom: 10px;
+  }
+
+  /* Responsive grid for main sections */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media(min-width: 900px) {
+    .dashboard {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media(min-width: 1300px) {
+    .dashboard {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .box {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #222;
+    color: #eee;
+  }
+
+  button {
+    background: #f4b942;
+    color: #111;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #ddb03b;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .output {
+    background: #111;
+    padding: 10px;
+    border-radius: 6px;
+    white-space: pre-line;
+    margin-top: 5px;
+  }
+
+  .history {
+    max-height: 400px;
+    overflow-y: auto;
+    font-size: 0.9em;
+  }
+
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  /* Smaller buttons inside grids */
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  @media(max-width:600px){
+    .button-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
 </head>
-
 <body>
 
 <h1>D&D Ultimate Roller 🎲</h1>
 
-<!-- DICE -->
-<div class="box">
-<h2>Dice / Math</h2>
-<input id="expression" value="1d20 + STR">
-<select id="adv">
-  <option value="normal">Normal</option>
-  <option value="adv">Advantage</option>
-  <option value="dis">Disadvantage</option>
-</select>
-<button onclick="rollExpression()">Roll</button>
-<div class="output" id="diceOut"></div>
-</div>
+<div class="dashboard">
 
-<!-- CHARACTER -->
-<div class="box">
-<h2>Character</h2>
-<input id="name" placeholder="Name">
+  <!-- DICE / MATH -->
+  <div class="box">
+    <h2>Dice / Math</h2>
+    <input id="expression" value="1d20 + STR">
+    <select id="adv">
+      <option value="normal">Normal</option>
+      <option value="adv">Advantage</option>
+      <option value="dis">Disadvantage</option>
+    </select>
+    <button onclick="rollExpression()">Roll</button>
+    <div class="output" id="diceOut"></div>
+  </div>
 
-<div class="grid">
-<input id="STR" type="number" value="10" placeholder="STR">
-<input id="DEX" type="number" value="10" placeholder="DEX">
-<input id="CON" type="number" value="10" placeholder="CON">
-<input id="INT" type="number" value="10" placeholder="INT">
-<input id="WIS" type="number" value="10" placeholder="WIS">
-<input id="CHA" type="number" value="10" placeholder="CHA">
-</div>
+  <!-- CHARACTER -->
+  <div class="box">
+    <h2>Character</h2>
+    <input id="name" placeholder="Name">
 
-<label>Proficiency Bonus</label>
-<input id="prof" type="number" value="2">
+    <div class="grid">
+      <input id="STR" type="number" value="10" placeholder="STR">
+      <input id="DEX" type="number" value="10" placeholder="DEX">
+      <input id="CON" type="number" value="10" placeholder="CON">
+      <input id="INT" type="number" value="10" placeholder="INT">
+      <input id="WIS" type="number" value="10" placeholder="WIS">
+      <input id="CHA" type="number" value="10" placeholder="CHA">
+    </div>
 
-<label>HP (current / max)</label>
-<input id="hp" value="10/10">
+    <label for="prof">Proficiency Bonus</label>
+    <input id="prof" type="number" value="2">
 
-<label>Armor Class</label>
-<input id="ac" value="10">
+    <label for="hp">HP (current / max)</label>
+    <input id="hp" value="10/10">
 
-<button onclick="saveChar()">Save</button>
-<button onclick="loadChar()">Load</button>
-<button onclick="deleteChar()">Delete</button>
+    <label for="ac">Armor Class</label>
+    <input id="ac" value="10">
 
-<div class="output" id="charOut"></div>
-</div>
+    <div class="button-grid">
+      <button onclick="saveChar()">Save</button>
+      <button onclick="loadChar()">Load</button>
+      <button onclick="deleteChar()">Delete</button>
+    </div>
 
-<!-- SKILLS / SAVES -->
-<div class="box">
-<h2>Checks</h2>
+    <div class="output" id="charOut"></div>
+  </div>
 
-<select id="checkStat">
-  <option value="STR">STR</option>
-  <option value="DEX">DEX</option>
-  <option value="CON">CON</option>
-  <option value="INT">INT</option>
-  <option value="WIS">WIS</option>
-  <option value="CHA">CHA</option>
-</select>
+  <!-- CHECKS -->
+  <div class="box">
+    <h2>Checks</h2>
+    <select id="checkStat">
+      <option value="STR">STR</option>
+      <option value="DEX">DEX</option>
+      <option value="CON">CON</option>
+      <option value="INT">INT</option>
+      <option value="WIS">WIS</option>
+      <option value="CHA">CHA</option>
+    </select>
+    <button onclick="rollCheck()">Skill / Save</button>
+    <div class="output" id="checkOut"></div>
+  </div>
 
-<button onclick="rollCheck()">Skill / Save</button>
-<div class="output" id="checkOut"></div>
-</div>
+  <!-- SPELLS -->
+  <div class="box">
+    <h2>Spells</h2>
+    <div class="button-grid">
+      <button onclick="spellAttack()">Spell Attack</button>
+      <button onclick="spellSave()">Spell Save DC</button>
+    </div>
+    <div class="output" id="spellOut"></div>
+  </div>
 
-<!-- SPELLS -->
-<div class="box">
-<h2>Spells</h2>
-<button onclick="spellAttack()">Spell Attack</button>
-<button onclick="spellSave()">Spell Save DC</button>
-<div class="output" id="spellOut"></div>
 </div>
 
 <!-- HISTORY -->
 <div class="box">
-<h2>History</h2>
-<div class="history" id="history"></div>
+  <h2>History</h2>
+  <div class="history" id="history"></div>
 </div>
 
 <script>
-// ===== Utils =====
-const d = s => Math.floor(Math.random()*s)+1;
-const mod = s => Math.floor((s-10)/2);
-const log = t => history.innerText = t + "\n" + history.innerText;
+  // ===== Utils =====
+  const d = s => Math.floor(Math.random() * s) + 1;
+  const mod = s => Math.floor((s - 10) / 2);
+  const log = t => history.innerText = t + "\n" + history.innerText;
 
-// ===== Dice =====
-function rollExpression(){
-  let expr = expression.value;
-  let rolls = [];
+  // ===== Dice =====
+  function rollExpression() {
+    let expr = expression.value;
+    let rolls = [];
 
-  expr = expr.replace(/(\\d*)d(\\d+)/gi,(m,c,s)=>{
-    c=c?+c:1; s=+s;
-    let r=[],t=0;
-    for(let i=0;i<c;i++){ let x=d(s); r.push(x); t+=x; }
-    rolls.push(`${c}d${s}: [${r}]`);
-    return t;
-  });
+    expr = expr.replace(/(\d*)d(\d+)/gi, (m, c, s) => {
+      c = c ? +c : 1;
+      s = +s;
+      let r = [], t = 0;
+      for (let i = 0; i < c; i++) {
+        let x = d(s);
+        r.push(x);
+        t += x;
+      }
+      rolls.push(`${c}d${s}: [${r}]`);
+      return t;
+    });
 
-  expr = expr.replace(/STR|DEX|CON|INT|WIS|CHA/gi,x=>mod(+document.getElementById(x).value));
+    expr = expr.replace(/STR|DEX|CON|INT|WIS|CHA/gi, x => mod(+document.getElementById(x).value));
 
-  let result;
-  try { result = Function(`return (${expr})`)(); }
-  catch { return diceOut.innerText="Invalid expression"; }
+    let result;
+    try {
+      result = Function(`return (${expr})`)();
+    } catch {
+      return diceOut.innerText = "Invalid expression";
+    }
 
-  if(adv.value!=="normal"){
-    let r2 = Function(`return (${expr})`)();
-    result = adv.value==="adv" ? Math.max(result,r2) : Math.min(result,r2);
-    rolls.push(`Adv/Dis roll: ${r2}`);
+    if (adv.value !== "normal") {
+      let r2 = Function(`return (${expr})`)();
+      result = adv.value === "adv" ? Math.max(result, r2) : Math.min(result, r2);
+      rolls.push(`Adv/Dis roll: ${r2}`);
+    }
+
+    diceOut.innerText = rolls.join("\n") + `\nResult: ${result}`;
+    log(`Dice: ${result}`);
   }
 
-  diceOut.innerText = rolls.join("\n") + `\nResult: ${result}`;
-  log(`Dice: ${result}`);
-}
+  // ===== Checks =====
+  function rollCheck() {
+    let s = checkStat.value;
+    let r = d(20) + mod(+document.getElementById(s).value);
+    checkOut.innerText = `Roll: ${r}`;
+    log(`Check (${s}): ${r}`);
+  }
 
-// ===== Checks =====
-function rollCheck(){
-  let s = checkStat.value;
-  let r = d(20) + mod(+document.getElementById(s).value);
-  checkOut.innerText = `Roll: ${r}`;
-  log(`Check (${s}): ${r}`);
-}
+  // ===== Spells =====
+  function spellAttack() {
+    let r = d(20) + mod(+CHA.value) + +prof.value;
+    spellOut.innerText = `Spell Attack: ${r}`;
+    log(`Spell Attack: ${r}`);
+  }
 
-// ===== Spells =====
-function spellAttack(){
-  let r = d(20) + mod(+CHA.value) + +prof.value;
-  spellOut.innerText = `Spell Attack: ${r}`;
-  log(`Spell Attack: ${r}`);
-}
-function spellSave(){
-  let dc = 8 + mod(+CHA.value) + +prof.value;
-  spellOut.innerText = `Spell Save DC: ${dc}`;
-  log(`Spell DC: ${dc}`);
-}
+  function spellSave() {
+    let dc = 8 + mod(+CHA.value) + +prof.value;
+    spellOut.innerText = `Spell Save DC: ${dc}`;
+    log(`Spell DC: ${dc}`);
+  }
 
-// ===== Characters =====
-function saveChar(){
-  let chars = JSON.parse(localStorage.getItem("chars")||"{}");
-  chars[name.value]={
-    STR:STR.value,DEX:DEX.value,CON:CON.value,
-    INT:INT.value,WIS:WIS.value,CHA:CHA.value,
-    prof:prof.value,hp:hp.value,ac:ac.value
-  };
-  localStorage.setItem("chars",JSON.stringify(chars));
-  charOut.innerText="Saved";
-}
-function loadChar(){
-  let c = JSON.parse(localStorage.getItem("chars")||"{}")[name.value];
-  if(!c) return;
-  Object.keys(c).forEach(k=>document.getElementById(k).value=c[k]);
-  charOut.innerText="Loaded";
-}
-function deleteChar(){
-  let chars = JSON.parse(localStorage.getItem("chars")||"{}");
-  delete chars[name.value];
-  localStorage.setItem("chars",JSON.stringify(chars));
-  charOut.innerText="Deleted";
-}
+  // ===== Characters =====
+  function saveChar() {
+    let chars = JSON.parse(localStorage.getItem("chars") || "{}");
+    chars[name.value] = {
+      STR: STR.value,
+      DEX: DEX.value,
+      CON: CON.value,
+      INT: INT.value,
+      WIS: WIS.value,
+      CHA: CHA.value,
+      prof: prof.value,
+      hp: hp.value,
+      ac: ac.value
+    };
+    localStorage.setItem("chars", JSON.stringify(chars));
+    charOut.innerText = "Saved";
+  }
+
+  function loadChar() {
+    let c = JSON.parse(localStorage.getItem("chars") || "{}")[name.value];
+    if (!c) return;
+    Object.keys(c).forEach(k => document.getElementById(k).value = c[k]);
+    charOut.innerText = "Loaded";
+  }
+
+  function deleteChar() {
+    let chars = JSON.parse(localStorage.getItem("chars") || "{}");
+    delete chars[name.value];
+    localStorage.setItem("chars", JSON.stringify(chars));
+    charOut.innerText = "Deleted";
+  }
 </script>
 
 </body>
